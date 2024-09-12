@@ -1,0 +1,14 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "workers-dbms"
+main = "src/index.ts"
+compatibility_date = "2024-09-09"
+compatibility_flags = ["experimental"]
+account_id = "0d37909e38d3e99c29fa2cd343ac421a"
+
+[[durable_objects.bindings]]
+name = "DBSM_DO"
+class_name = "DBMSDO"
+
+[[migrations]]
+tag = "v1" # Should be unique for each entry
+new_classes = ["DBMSDO"]
