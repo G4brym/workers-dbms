@@ -8,6 +8,7 @@ const INTERNAL_CONFIG_DATABASE_ID = `workers-dbsm-internal-configs`
 export async function getConfigDatabase(env: Env): Promise<DurableObjectStub<DBMSDO>> {
 	const id = env.DBSM_DO.idFromName(INTERNAL_CONFIG_DATABASE_ID);
 	const stub = env.DBSM_DO.get(id)
+	await stub.setEnabled(1)
 
 	await applyConfigMigrations(stub)
 

@@ -6,6 +6,7 @@ import {getConfigDatabase} from "../../dbms/configs";
 export class CreateDatabase extends OpenAPIRoute {
 	schema = {
 		summary: 'Create Database',
+		tags: ['Databases'],
 		request: {
 			body: {
 				content: {
@@ -26,7 +27,7 @@ export class CreateDatabase extends OpenAPIRoute {
 		let result
 		try {
 			result = await configDatabase.sql({
-				query: 'INSERT INTO databases (id) values (?)',
+				query: 'INSERT INTO databases (id) values (?) RETURNING *',
 				arguments: [data.body.database_id]
 			})
 		} catch (e) {
@@ -38,7 +39,6 @@ export class CreateDatabase extends OpenAPIRoute {
 
 		const id = c.env.DBSM_DO.idFromName(data.body.database_id);
 		const stub = c.env.DBSM_DO.get(id)
-
 		await stub.setEnabled(1)
 
 		return c.json({

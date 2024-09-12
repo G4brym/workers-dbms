@@ -6,6 +6,7 @@ import {getConfigDatabase} from "../../dbms/configs";
 export class DeleteDatabase extends OpenAPIRoute {
 	schema = {
 		summary: 'Delete Database',
+		tags: ['Databases'],
 		request: {
 			params: z.object({
 				database_id: databaseIdField
@@ -24,12 +25,13 @@ export class DeleteDatabase extends OpenAPIRoute {
 		await stub.destroy()
 
 		const result = configDatabase.sql({
-			query: 'DELETE FROM databases WHERE id = ?',
+			query: 'DELETE FROM databases WHERE id = ? RETURNING *',
 			arguments: [data.params.database_id]
 		})
 
 		return c.json({
-			success: true
+			success: true,
+			result
 		})
 	}
 }

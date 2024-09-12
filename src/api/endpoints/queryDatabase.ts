@@ -5,6 +5,7 @@ import {databaseIdField} from "../../types";
 export class QueryDatabase extends OpenAPIRoute {
 	schema = {
 		summary: 'Query Database',
+		tags: ['Databases'],
 		request: {
 			params: z.object({
 				database_id: databaseIdField
