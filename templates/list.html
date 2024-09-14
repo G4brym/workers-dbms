@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block main %}
+<div class="row">
+	<a href="{{baseUrl}}/novo" class="btn btn-primary float-sm-end">New</a>
+	{% if objectList %}
+	<table class="table table-hover">
+		<thead>
+		<tr>
+
+			{% for key, value in objectList[0] %}
+			<th scope="col">{{key}}</th>
+			{% endfor %}
+
+		</tr>
+		</thead>
+		<tbody>
+
+		{% for row in objectList %}
+		<tr onclick="window.location.href = `{{baseUrl}}/{{ row.id }}`" style="cursor: pointer">
+
+			{% for key, value in row %}
+			<td>
+				{{value}}
+			</td>
+			{% endfor %}
+		</tr>
+		{% endfor %}
+
+		</tbody>
+	</table>
+
+	{% else %}
+	Nothing to show
+	{% endif %}
+</div>
+{% endblock %}

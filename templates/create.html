@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block main %}
+<div style="max-width: 512px; margin: auto">
+	<form method="post" action="">
+		{% if errors %}
+		{% for error in errors %}
+		<div class="small text-danger">{{error.message}}</div>
+		{% endfor %}
+		{% endif %}
+
+		<fieldset>
+			{% for field in fields %}
+			<label for="{{field.name}}">
+				{{field.name}}
+				{{field.html | safe }}
+				{% if field.errors %}
+				{% for error in field.errors %}
+				<small>
+					{{error.message}}
+				</small>
+				{% endfor %}
+				{% endif %}
+			</label>
+
+			{% endfor %}
+			<button type="submit" style="width: auto">Save</button>
+		</fieldset>
+	</form>
+</div>
+{% endblock %}

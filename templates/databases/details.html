@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block main %}
+<div style="display: flex; flex-direction: column;">
+	<h3>{{object.id}}</h3>
+
+	<div style="display: flex; flex-direction: column">
+		<article>
+			HTTPS Endpoint: <b>{{endpoints.https}}</b>
+		</article>
+		<article>
+			Websocket Endpoint: <b>soon</b>
+		</article>
+	</div>
+	<div class="grid">
+		<article>
+			Database Size: {{stats.databaseSize}}<small>MB</small>
+		</article>
+		<article>
+			Tables: {{stats.tables.length}}
+		</article>
+	</div>
+
+	{% if stats.tables.length > 0 %}
+	<div>
+		<article>
+			<table>
+				<thead>
+				<tr>
+					<th scope="col">Table Name</th>
+					<th scope="col">Columns</th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for table in stats.tables %}
+				<tr>
+					<th scope="row">{{table.tbl_name}}</th>
+					<th scope="row">{{table.columns}}</th>
+				</tr>
+				{% endfor %}
+			</table>
+		</article>
+	</div>
+	{% endif %}
+
+	<div>
+		<article>
+			<h6>Query Database</h6>
+			<textarea id="query">select 1</textarea>
+			<button id="query-run" style="width: auto">Run</button>
+			<button id="query-loading" style="display: none" aria-busy="true"></button>
+
+			<div id="result" style="margin-top: 1em;"></div>
+		</article>
+	</div>
+
+
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="
+https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js
+"></script>
+<script>
+	var queryTextbox = $("#query");
+	var queryResult = $("#result");
+	var buttonQueryLoading = $("#query-loading");
+	var buttonQueryRun = $("#query-run");
+	buttonQueryRun.on("click", function (event) {
+		buttonQueryLoading.show();
+		buttonQueryRun.hide();
+		console.log(queryTextbox.val())
+
+		$.ajax({
+			url: "{{endpoints.https}}",
+			method: 'post',
+			data: JSON.stringify({
+				query: queryTextbox.val()
+			}),
+			contentType: "application/json; charset=utf-8",
+			traditional: true,
+			success: function (result) {
+				if (result.length > 0) {
+					var table = `
+<table><thead><tr>
+${Object.keys(result[0]).map((obj) => '<th scope="col">' + obj + '</th>').join('')}
+</tr></thead><tbody>
+${result.map((obj) => '<tr>' + Object.values(obj).map((inner) => '<th scope="row">' + inner + '</th>').join('') + '</tr>').join('')}
+</tbody></table>`
+
+					queryResult.html(table)
+				} else {
+					queryResult.html('No rows returned')
+				}
+
+				buttonQueryLoading.hide();
+				buttonQueryRun.show();
+			}
+		});
+	});
+</script>
+{% endblock %}
+

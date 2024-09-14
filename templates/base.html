@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+	<title>{{ title }}</title>
+	<meta name="description" content="Workers Database Management System"/>
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"/>
+	<style>
+		html, body {
+			height: 100%;
+		}
+		body {
+			display: flex;
+			flex-direction: column;
+		}
+		footer {
+			margin-bottom: 0;
+			margin-top: auto;
+			text-align: end;
+		}
+		footer small {
+			font-size: small;
+		}
+		header .title {
+			text-decoration: none;
+		}
+		header .title:hover {
+			text-decoration: none;
+		}
+	</style>
+	{% block css %}{% endblock %}
+</head>
+
+<body>
+<header class="container">
+	{% block header %}
+	<hgroup>
+		<a href="/databases" class="title"><h1>workers-dbms</h1></a>
+	</hgroup>
+	{% endblock %}
+</header>
+
+<main class="container">
+	{% block main %}{% endblock %}
+</main>
+
+<footer class="container">
+	<small><a href="https://massadas.com" target="_blank">massadas.com</a></small>
+</footer>
+
+{% block js %}{% endblock %}
+</body>
+</html>

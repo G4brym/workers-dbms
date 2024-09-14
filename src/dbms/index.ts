@@ -60,6 +60,31 @@ export class DBMSDO extends DurableObject<Env> {
 		return Array.from(cursor)
 	}
 
+	async stats(): Promise<object> {
+		if (this.enabled === 0) {
+			throw new Error(`This database doesn't exist`)
+		}
+
+		const tables = (await this.sql({
+			query: `SELECT *
+					FROM sqlite_master
+					where type = 'table'
+					  and tbl_name not like '_cf%';`
+		})).map((obj) => {
+			const columns = obj.sql.split('(')[1].split(')')[0].split(',').map((col) => col.trim().replaceAll('"', '').split(' ')[0])
+
+			return {
+				...obj,
+				columns
+			}
+		})
+
+		return {
+			databaseSize: this.ctx.storage.sql.databaseSize,
+			tables
+		}
+	}
+
 	async destroy(): Promise<void> {
 		await this.ctx.storage.deleteAll();
 	}

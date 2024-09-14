@@ -14,11 +14,13 @@
     "@cloudflare/workers-types": "^4.20240909.0",
     "typescript": "^5.5.2",
     "vitest": "1.5.0",
-    "wrangler": "^3.60.3"
+    "wrangler": "^3.78.0"
   },
   "dependencies": {
     "chanfana": "^2.0.4",
     "hono": "^4.6.1",
+    "nunjucks": "^3.2.4",
+    "workers-qb": "^1.6.1",
     "zod": "^3.23.8"
   }
 }

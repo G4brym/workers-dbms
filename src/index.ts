@@ -1,5 +1,5 @@
-import {openapi} from "./api";
+import {app} from "./app";
 
 export {DBMSDO} from "./dbms";
 
-export default openapi
+export default app

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block main %}
+<div style="display: flex; flex-wrap: wrap">
+
+	{% for row in objectList %}
+	<div class="db">
+		<article>
+			<h2>{{row.id}}</h2>
+			<a href="/databases/manage/{{row.id}}">Manage Database</a>
+		</article>
+	</div>
+	{% endfor %}
+
+	<div class="db">
+		<article>
+			<h2>+</h2>
+			<a href="/databases/new">Create new Database</a>
+		</article>
+	</div>
+
+</div>
+{% endblock %}
+
+{% block css %}
+<style>
+	.db {
+		flex-basis: 33.33%;
+	}
+
+	.db article {
+		margin: 8px;
+	}
+</style>
+{% endblock %}
