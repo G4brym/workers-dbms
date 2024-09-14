@@ -1,42 +1,42 @@
-import { z, ZodType } from 'zod';
+import { z, type ZodType } from "zod";
 
 export type BaseFieldOptions = {
-	default: string | number | boolean,
-	zodType: ZodType<any>
-	htmlType: 'text' | 'email' | 'number' | 'date' | 'checkbox',
-	auto: boolean,
-	verbose_name: string,
-	nullable: boolean,
-	blank: boolean,
-	min: number,
-	max: number,
-	getFieldHtml: (fieldName: string, options, data?: any) => string
-}
+	default: string | number | boolean;
+	zodType: ZodType<any>;
+	htmlType: "text" | "email" | "number" | "date" | "checkbox";
+	auto: boolean;
+	verbose_name: string;
+	nullable: boolean;
+	blank: boolean;
+	min: number;
+	max: number;
+	getFieldHtml: (fieldName: string, options, data?: any) => string;
+};
 
 export class BaseField {
 	private _options: Partial<BaseFieldOptions> = {
 		zodType: z.string(),
 		getFieldHtml: (fieldName: string, options, data?: any) => {
 			const p = options;
-			const value = data || p.default
-			return `<input class="form-control" type="${p.htmlType}" ${value ? `value="${value}"` : ''} ${p.blank !== true ? 'required' : ''} name="${fieldName}" id="${fieldName}">`;
-		}
+			const value = data || p.default;
+			return `<input class="form-control" type="${p.htmlType}" ${value ? `value="${value}"` : ""} ${p.blank !== true ? "required" : ""} name="${fieldName}" id="${fieldName}">`;
+		},
 	};
 
 	public getVerboseName(): string | undefined {
-		return this._options.verbose_name
+		return this._options.verbose_name;
 	}
 
 	public getFieldHtml(fieldName: string, data) {
 		if (this._options.getFieldHtml === undefined) {
-			throw new Error('getFieldHtml not defined')
+			throw new Error("getFieldHtml not defined");
 		}
 
-		return this._options.getFieldHtml(fieldName, this._options, data)
+		return this._options.getFieldHtml(fieldName, this._options, data);
 	}
 
 	public get(option: string) {
-		return this._options[option]
+		return this._options[option];
 	}
 
 	public getZodField(input: string): ZodType<any> {
@@ -61,138 +61,126 @@ export class BaseField {
 	constructor(options: Partial<BaseFieldOptions>) {
 		this._options = {
 			...this._options,
-			...options
+			...options,
 		};
 	}
 
-	default(param: BaseFieldOptions['default']) {
-		return new BaseField(
-			{
-				...this._options,
-				default: param
-			}
-		);
+	default(param: BaseFieldOptions["default"]) {
+		return new BaseField({
+			...this._options,
+			default: param,
+		});
 	}
 
-	htmlType(param: BaseFieldOptions['htmlType']) {
-		return new BaseField(
-			{
-				...this._options,
-				htmlType: param
-			}
-		);
+	htmlType(param: BaseFieldOptions["htmlType"]) {
+		return new BaseField({
+			...this._options,
+			htmlType: param,
+		});
 	}
 
-	auto(param: BaseFieldOptions['auto'] = true) {
-		return new BaseField(
-			{
-				...this._options,
-				auto: param
-			}
-		);
+	auto(param: BaseFieldOptions["auto"] = true) {
+		return new BaseField({
+			...this._options,
+			auto: param,
+		});
 	}
 
-	verbose_name(param: BaseFieldOptions['verbose_name']) {
-		return new BaseField(
-			{
-				...this._options,
-				verbose_name: param
-			}
-		);
+	verbose_name(param: BaseFieldOptions["verbose_name"]) {
+		return new BaseField({
+			...this._options,
+			verbose_name: param,
+		});
 	}
 
-	nullable(param: BaseFieldOptions['nullable'] = true) {
-		return new BaseField(
-			{
-				...this._options,
-				nullable: param
-			}
-		);
+	nullable(param: BaseFieldOptions["nullable"] = true) {
+		return new BaseField({
+			...this._options,
+			nullable: param,
+		});
 	}
 
-	blank(param: BaseFieldOptions['blank'] = true) {
-		return new BaseField(
-			{
-				...this._options,
-				blank: param
-			}
-		);
+	blank(param: BaseFieldOptions["blank"] = true) {
+		return new BaseField({
+			...this._options,
+			blank: param,
+		});
 	}
 
-	min(param: BaseFieldOptions['min']) {
-		return new BaseField(
-			{
-				...this._options,
-				min: param
-			}
-		);
+	min(param: BaseFieldOptions["min"]) {
+		return new BaseField({
+			...this._options,
+			min: param,
+		});
 	}
 
-	max(param: BaseFieldOptions['max']) {
-		return new BaseField(
-			{
-				...this._options,
-				max: param
-			}
-		);
+	max(param: BaseFieldOptions["max"]) {
+		return new BaseField({
+			...this._options,
+			max: param,
+		});
 	}
 }
 
 export class b {
 	static string(options?: Partial<BaseFieldOptions>) {
 		return new BaseField({
-			htmlType: 'text',
-			...(options || {})
+			htmlType: "text",
+			...(options || {}),
 		});
 	}
 
 	static slug(options?: Partial<BaseFieldOptions>) {
 		return new BaseField({
-			zodType: z.string().regex(/^[a-z0-9_]+(?:-[a-z0-9_]+)*$/, "not valid slug"),
-			htmlType: 'text',
-			...(options || {})
+			zodType: z
+				.string()
+				.regex(/^[a-z0-9_]+(?:-[a-z0-9_]+)*$/, "not valid slug"),
+			htmlType: "text",
+			...(options || {}),
 		});
 	}
 
 	static number(options?: Partial<BaseFieldOptions>) {
 		return new BaseField({
 			zodType: z.coerce.number(),
-			htmlType: 'number',
-			...(options || {})
+			htmlType: "number",
+			...(options || {}),
 		});
 	}
 
 	static integer(options?: Partial<BaseFieldOptions>) {
 		return new BaseField({
 			zodType: z.coerce.number().int(),
-			htmlType: 'number',
-			...(options || {})
+			htmlType: "number",
+			...(options || {}),
 		});
 	}
 
 	static boolean(options?: Partial<BaseFieldOptions>) {
 		return new BaseField({
 			zodType: z.coerce.boolean(),
-			htmlType: 'checkbox',
+			htmlType: "checkbox",
 			getFieldHtml: (fieldName: string, options, data?: any) => {
-				const {getFieldHtml, ...safeOptions} = options
-				let field = (b.string(safeOptions as object).getFieldHtml(fieldName, data))
+				const { getFieldHtml, ...safeOptions } = options;
+				let field = b
+					.string(safeOptions as object)
+					.getFieldHtml(fieldName, data);
 
 				if (data === true || data === 1) {
-					field = field.replace('<input', `<input checked`)
+					field = field.replace("<input", `<input checked`);
 				}
 
-				return field.replace('form-control', 'form-check-input')
+				return field.replace("form-control", "form-check-input");
 			},
-			...(options || {})
+			...(options || {}),
 		});
 	}
 
 	static datetime(options?: Partial<BaseFieldOptions>) {
 		return new BaseField({
 			zodType: z.coerce.date(),
-			htmlType: 'date',
-			...(options || {})
+			htmlType: "date",
+			...(options || {}),
 		});
 	}
 }

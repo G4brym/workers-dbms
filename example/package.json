@@ -1,0 +1,13 @@
+{
+	"name": "example-workers-dbms",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"deploy": "npx wrangler deploy",
+		"dev": "npx wrangler dev"
+	},
+	"dependencies": {
+		"workers-dbms": "^0.0.2",
+		"wrangler": "^3.78.0"
+	}
+}

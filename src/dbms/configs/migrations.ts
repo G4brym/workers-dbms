@@ -1,12 +1,12 @@
 export type Migration = {
-  name: string;
-  sql: string;
+	name: string;
+	sql: string;
 };
 
 export const migrations: Migration[] = [
-  {
-    name: "100000000000000_add_databases_table.ts",
-    sql: `
+	{
+		name: "100000000000000_add_databases_table.ts",
+		sql: `
       create table if not exists databases
       (
         id                    TEXT                                not null
@@ -22,5 +22,5 @@ export const migrations: Migration[] = [
       SET updated_at = CURRENT_TIMESTAMP
       WHERE id = NEW.id;
       END;`,
-  },
+	},
 ];

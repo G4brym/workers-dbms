@@ -1,8 +1,8 @@
-import { BaseField } from './builder/base';
+import type { BaseField } from "./builder/base";
 
 export type baseModel = {
-	tableName: string,
-	name: string,
-	pluralName: string,
-	fields: Record<string, typeof BaseField>
-}
+	tableName: string;
+	name: string;
+	pluralName: string;
+	fields: Record<string, typeof BaseField>;
+};

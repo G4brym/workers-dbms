@@ -1,0 +1,13 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "workers-dbms"
+main = "index.ts"
+compatibility_date = "2024-09-09"
+compatibility_flags = ["experimental"]
+
+[[durable_objects.bindings]]
+name = "DBSM_DO"
+class_name = "DBMSDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DBMSDO"]

@@ -1,5 +1,2 @@
-import {app} from "./app";
-
+export {generateApp} from "./app";
 export {DBMSDO} from "./dbms";
-
-export default app

@@ -1,9 +1,12 @@
 import {Hono} from "hono";
-import {Env} from "./bindings";
 import {buildOpenAPI} from "./api";
 import {buildViews} from "./forms";
 
-export const app = new Hono<Env>()
+export function generateApp() {
+	const app = new Hono();
 
-buildOpenAPI(app)
-buildViews(app)
+	buildOpenAPI(app);
+	buildViews(app);
+
+	return app
+}

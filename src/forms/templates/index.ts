@@ -43,14 +43,20 @@ class PrecompiledLoader extends nunjucks.Loader {
 			};
 		}
 
-		throw new Error(`Template "${name}" not found. Make sure to run the precompiler first!`);
+		throw new Error(
+			`Template "${name}" not found. Make sure to run the precompiler first!`,
+		);
 	}
 }
 
 export class NunjucksTemplates {
 	env: nunjucks.Environment;
 
-	constructor(templates: Templates = {}, filters: Filters = {}, globals: Globals = {}) {
+	constructor(
+		templates: Templates = {},
+		filters: Filters = {},
+		globals: Globals = {},
+	) {
 		this.env = new nunjucks.Environment(new PrecompiledLoader(templates));
 
 		for (const [name, fn] of Object.entries(filters)) {
@@ -67,4 +73,4 @@ export class NunjucksTemplates {
 	}
 }
 
-export const engine = new NunjucksTemplates(templates)
+export const engine = new NunjucksTemplates(templates);

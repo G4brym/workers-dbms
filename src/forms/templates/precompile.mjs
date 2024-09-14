@@ -10,8 +10,12 @@ import { writeFileSync } from "node:fs";
 const args = argv.slice(2);
 
 if (args.length != 2) {
-	console.error("Usage: hono-nunjucks-precompile src/templates src/compiled.mjs");
-	console.error("Note: Do not put the output file to the same directory as the templates (reload cycle)!");
+	console.error(
+		"Usage: hono-nunjucks-precompile src/templates src/compiled.mjs",
+	);
+	console.error(
+		"Note: Do not put the output file to the same directory as the templates (reload cycle)!",
+	);
 	exit(1);
 }
 
@@ -23,7 +27,9 @@ function wrapper(templates) {
 		// safe and stringify the hell out of it.
 		const parsed = parse(template.name);
 		const origName = JSON.stringify(template.name);
-		const name = JSON.stringify(`${parsed.dir.length == 0 ? "" : `${parsed.dir}/`}${parsed.name}${parsed.ext}`);
+		const name = JSON.stringify(
+			`${parsed.dir.length == 0 ? "" : `${parsed.dir}/`}${parsed.name}${parsed.ext}`,
+		);
 
 		out += `//------------- START ${origName} -------------\n`;
 		out += `templates[${name}] = (function() {\n${template.template}\n})();\n`;

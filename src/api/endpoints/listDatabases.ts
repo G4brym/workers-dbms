@@ -1,12 +1,12 @@
-import {OpenAPIRoute} from "chanfana";
-import {z} from "zod";
-import {databaseIdField} from "../../types";
-import {getConfigDatabase} from "../../dbms/configs";
+import { OpenAPIRoute } from "chanfana";
+import { z } from "zod";
+import { databaseIdField } from "../../types";
+import { getConfigDatabase } from "../../dbms/configs";
 
 export class ListDatabases extends OpenAPIRoute {
 	schema = {
-		summary: 'List Databases',
-		tags: ['Databases'],
+		summary: "List Databases",
+		tags: ["Databases"],
 		// request: {
 		// 	body: {
 		// 		content: {
@@ -18,27 +18,30 @@ export class ListDatabases extends OpenAPIRoute {
 		// 		},
 		// 	},
 		// },
-	}
+	};
 
 	async handle(c) {
 		// const data = await this.getValidatedData<typeof this.schema>()
 
-		const configDatabase = await getConfigDatabase(c.env)
-		let result
+		const configDatabase = await getConfigDatabase(c.env);
+		let result;
 		try {
 			result = await configDatabase.sql({
-				query: 'SELECT * FROM databases',
-			})
+				query: "SELECT * FROM databases",
+			});
 		} catch (e) {
-			return c.json({
-				success: false,
-				error: e.message
-			}, 500)
+			return c.json(
+				{
+					success: false,
+					error: e.message,
+				},
+				500,
+			);
 		}
 
 		return c.json({
 			success: true,
-			result
-		})
+			result,
+		});
 	}
 }

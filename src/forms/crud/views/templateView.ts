@@ -1,7 +1,7 @@
-import {HttpResponse} from '../../utils/render';
-import {NunjucksTemplates} from './../../templates';
-import {engine} from '../../templates'
-import {RequestProperties} from "../../../bindings";
+import { HttpResponse } from "../../utils/render";
+import type { NunjucksTemplates } from "./../../templates";
+import { engine } from "../../templates";
+import type { RequestProperties } from "../../../bindings";
 
 export class TemplateView {
 	templateName: string;
@@ -26,13 +26,13 @@ export class TemplateView {
 
 	async extraContext() {
 		return {
-			baseUrl: this.baseUrl
+			baseUrl: this.baseUrl,
 		};
 	}
 
 	async get() {
 		const output = this.engine.render(this.templateName, {
-			...await this.extraContext()
+			...(await this.extraContext()),
 		});
 
 		return HttpResponse(output);

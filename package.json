@@ -1,26 +1,61 @@
 {
-  "name": "workers-dbms",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
-    "start": "wrangler dev",
-    "test": "vitest",
-    "cf-typegen": "wrangler types"
-  },
-  "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.4.5",
-    "@cloudflare/workers-types": "^4.20240909.0",
-    "typescript": "^5.5.2",
-    "vitest": "1.5.0",
-    "wrangler": "^3.78.0"
-  },
-  "dependencies": {
-    "chanfana": "^2.0.4",
-    "hono": "^4.6.1",
-    "nunjucks": "^3.2.4",
-    "workers-qb": "^1.6.1",
-    "zod": "^3.23.8"
-  }
+	"name": "workers-dbms",
+	"version": "0.0.1",
+	"description": "Workers Database Management System for Durable Objects",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist",
+		"LICENSE",
+		"README.md"
+	],
+	"scripts": {
+		"build": "npm run build-templates && tsup src/index.ts --format cjs,esm --dts --external cloudflare:workers",
+		"build-templates": "node src/forms/templates/precompile.mjs templates src/forms/precompiled.mjs",
+		"format": "npx @biomejs/biome format --write",
+		"lint-biome": "npx @biomejs/biome lint --write"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"keywords": [
+		"cloudflare",
+		"worker",
+		"workers",
+		"serverless",
+		"cloudflare do",
+		"dosql",
+		"neon.tech",
+		"databases on-demand",
+		"cloudflare sql",
+		"workers sql",
+		"cf"
+	],
+	"author": "Gabriel Massadas",
+	"license": "MIT",
+	"homepage": "https://workers-dbms.massadas.com",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:G4brym/workers-dbms.git"
+	},
+	"bugs": {
+		"url": "https://github.com/G4brym/workers-dbms/issues"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.0",
+		"@cloudflare/vitest-pool-workers": "^0.4.5",
+		"@cloudflare/workers-types": "^4.20240909.0",
+		"tsup": "^8.2.4",
+		"typescript": "^5.5.2",
+		"vitest": "1.5.0",
+		"wrangler": "^3.78.0"
+	},
+	"dependencies": {
+		"nunjucks": "^3.2.4",
+		"chanfana": "^2.0.4",
+		"hono": "^4.6.1",
+		"workers-qb": "^1.6.2",
+		"zod": "^3.23.8"
+	}
 }

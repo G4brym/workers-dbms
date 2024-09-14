@@ -1,39 +1,39 @@
-import { TemplateView } from './templateView';
-import { baseModel } from '../../models/base';
-import { z, ZodError } from 'zod';
-import { HttpResponse } from '../../utils/render';
-import { engine } from '../../utils/engine';
+import { TemplateView } from "./templateView";
+import type { baseModel } from "../../models/base";
+import { z, ZodError } from "zod";
+import { HttpResponse } from "../../utils/render";
 
 export class DetailsView extends TemplateView {
 	model: baseModel;
-	_cached_object: Record<string, any>
+	_cached_object: Record<string, any>;
 
 	async getQuerySet() {
-		return this.props.ctx.qb.select(this.model.tableName)
-			.where('id = ?1', this.props.params.id)
+		return this.props.ctx.qb
+			.select(this.model.tableName)
+			.where("id = ?1", this.props.params.id);
 	}
 
 	async getQueryResult(): Promise<Record<string, any>> {
 		if (!this._cached_object) {
-			const obj = (await (await this.getQuerySet()).limit(1).execute()).results
+			const obj = (await (await this.getQuerySet()).limit(1).execute()).results;
 
 			if (!obj || obj.length === 0) {
-				throw new Error('404 object not found') // TODO: better errors
+				throw new Error("404 object not found"); // TODO: better errors
 			}
 
-			this._cached_object = obj[0]
+			this._cached_object = obj[0];
 		}
 
-		return this._cached_object
+		return this._cached_object;
 	}
 
 	async extraContext(): Promise<object> {
-		const obj = await this.getQueryResult()
+		const obj = await this.getQueryResult();
 		return {
-			...await super.extraContext(),
+			...(await super.extraContext()),
 			title: `Edit ${obj.name}`,
 			fields: this.buildForm(obj),
-			object: obj
+			object: obj,
 		};
 	}
 
@@ -42,27 +42,27 @@ export class DetailsView extends TemplateView {
 
 		const schema = this.buildValidationSchema();
 
-		let validatedData
+		let validatedData;
 		try {
 			validatedData = await schema.strict().parseAsync(formData);
 		} catch (e) {
 			if (e instanceof ZodError) {
-				const {fields, ...remaining} = await this.extraContext()
+				const { fields, ...remaining } = await this.extraContext();
 
 				const output = await this.engine.render(this.templateName, {
-					...await this.extraContext(),
+					...(await this.extraContext()),
 					errors: e.issues.map((issue) => {
 						return {
 							code: issue.code,
-							message: issue.message
-						}
-					})
+							message: issue.message,
+						};
+					}),
 				});
 
-				return HttpResponse(output)
+				return HttpResponse(output);
 			}
 
-			throw e
+			throw e;
 		}
 
 		await this.createObject(validatedData);
@@ -73,9 +73,11 @@ export class DetailsView extends TemplateView {
 	}
 
 	async getPostFormData() {
-		const formData: object = Object.fromEntries(await this.props.request.formData());
+		const formData: object = Object.fromEntries(
+			await this.props.request.formData(),
+		);
 		for (const [key, value] of Object.entries(formData)) {
-			if (value === '') {
+			if (value === "") {
 				formData[key] = null;
 			}
 		}
@@ -83,19 +85,23 @@ export class DetailsView extends TemplateView {
 	}
 
 	async createObject(data) {
-		return await this.props.ctx.qb.update({
-			tableName: this.model.tableName,
-			data: data,
-			where: {
-				conditions: 'id = ?1',
-				params: [this.props.params.id]
-			}
-		}).execute();
+		return await this.props.ctx.qb
+			.update({
+				tableName: this.model.tableName,
+				data: data,
+				where: {
+					conditions: "id = ?1",
+					params: [this.props.params.id],
+				},
+			})
+			.execute();
 	}
 
 	buildValidationSchema() {
 		const fields = {};
-		for (const [name, field] of Object.entries(this.model.fields).filter(([key, field]) => field.get('auto') !== true)) {
+		for (const [name, field] of Object.entries(this.model.fields).filter(
+			([key, field]) => field.get("auto") !== true,
+		)) {
 			fields[name] = field.getZodField();
 		}
 
@@ -104,11 +110,13 @@ export class DetailsView extends TemplateView {
 
 	buildForm(data) {
 		const fields = [];
-		for (const [name, field] of Object.entries(this.model.fields).filter(([key, field]) => field.get('auto') !== true)) {
+		for (const [name, field] of Object.entries(this.model.fields).filter(
+			([key, field]) => field.get("auto") !== true,
+		)) {
 			fields.push({
 				name,
 				html: field.getFieldHtml(name, data[name]),
-				field: field
+				field: field,
 			});
 		}
 

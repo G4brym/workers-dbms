@@ -8,8 +8,8 @@
 export function HttpResponse(content: string) {
 	return new Response(content, {
 		headers: {
-			'content-type': 'text/html;charset=UTF-8'
-		}
+			"content-type": "text/html;charset=UTF-8",
+		},
 	});
 }
 

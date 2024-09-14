@@ -1,5 +1,5 @@
-import {DBMSDO} from "./dbms";
-import {DBMSQB} from "./forms/models/querybuilder";
+import type { DBMSDO } from "./dbms";
+import type { DBMSQB } from "./forms/models/querybuilder";
 
 export type Env = {
 	DBSM_DO: DurableObjectNamespace<DBMSDO>;
@@ -11,8 +11,8 @@ export interface Context {
 }
 
 export interface RequestProperties {
-	request: Request,
-	env: Env,
-	ctx: Context
-	params: Record<string, any>
+	request: Request;
+	env: Env;
+	ctx: Context;
+	params: Record<string, any>;
 }

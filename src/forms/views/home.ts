@@ -1,31 +1,31 @@
-import { TemplateView } from '../crud/views/templateView';
-import {getConfigDatabase} from "../../dbms/configs";
+import { TemplateView } from "../crud/views/templateView";
+import { getConfigDatabase } from "../../dbms/configs";
 
 export class HomeView extends TemplateView {
-	templateName = 'home.html';
+	templateName = "home.html";
 
 	async extraContext(): Promise<{}> {
-		const configDB = await getConfigDatabase(this.props.env)
+		const configDB = await getConfigDatabase(this.props.env);
 		const databases = await configDB.sql({
-			query: "select * from databases"
-		})
+			query: "select * from databases",
+		});
 
-		console.log(databases)
+		console.log(databases);
 		return {
-			title: 'Dashboard',
+			title: "Dashboard",
 			databases: databases,
 			...super.extraContext(),
-		}
+		};
 	}
 }
 
 export class LayoutView extends TemplateView {
-	templateName = 'layout.html';
+	templateName = "layout.html";
 
 	async extraContext(): Promise<{}> {
 		return {
-			title: 'Layout',
+			title: "Layout",
 			...super.extraContext(),
-		}
+		};
 	}
 }

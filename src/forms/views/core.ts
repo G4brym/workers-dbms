@@ -1,6 +1,6 @@
-import {RequestProperties} from "../../bindings";
-import {DBMSQB} from "../models/querybuilder";
-import {getConfigDatabase} from "../../dbms/configs";
+import type { RequestProperties } from "../../bindings";
+import { DBMSQB } from "../models/querybuilder";
+import { getConfigDatabase } from "../../dbms/configs";
 
 export function fwrapper(view) {
 	return async (c) => {
@@ -11,9 +11,9 @@ export function fwrapper(view) {
 			env: c.env,
 			ctx: {
 				executionContext: c.ctx,
-				qb: new DBMSQB(await getConfigDatabase(c.env))
+				qb: new DBMSQB(await getConfigDatabase(c.env)),
 			},
-			params: c.req.param()
-		} as RequestProperties).handle()
-	}
+			params: c.req.param(),
+		} as RequestProperties).handle();
+	};
 }
