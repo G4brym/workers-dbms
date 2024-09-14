@@ -1,6 +1,6 @@
 {
 	"name": "workers-dbms",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Workers Database Management System for Durable Objects",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
