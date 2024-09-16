@@ -3,26 +3,14 @@ import { z } from "zod";
 import { databaseIdField } from "../../types";
 import {getConfigDatabase} from "../../dbms/configs";
 
-export class QueryDatabase extends OpenAPIRoute {
+export class WebsocketDatabase extends OpenAPIRoute {
 	schema = {
-		summary: "Query Database",
+		summary: "Websocket Database",
 		tags: ["Databases"],
 		request: {
 			params: z.object({
 				database_id: databaseIdField,
 			}),
-			body: {
-				content: {
-					"application/json": {
-						schema: z.object({
-							query: z.string(),
-							arguments: z
-								.array(z.string().or(z.number()).or(z.boolean()).nullable())
-								.optional().nullable(),
-						}),
-					},
-				},
-			},
 		},
 	};
 
@@ -41,22 +29,13 @@ export class QueryDatabase extends OpenAPIRoute {
 			});
 		}
 
-		let result;
-		try {
-			result = await stub.sql({
-				query: data.body.query,
-				arguments: data.body.arguments,
-			});
-		} catch (e) {
-			return c.json(
-				{
-					success: false,
-					error: e.message,
-				},
-				500,
-			);
-		}
+      // Expect to receive a WebSocket Upgrade request.
+      // If there is one, accept the request and return a WebSocket Response.
+      const upgradeHeader = c.req.raw.headers.get('Upgrade');
+      if (!upgradeHeader || upgradeHeader !== 'websocket') {
+        return new Response('Durable Object expected Upgrade: websocket', { status: 426 });
+      }
 
-		return c.json(result);
+      return stub.fetch(c.req.raw);
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"name": "workers-dbms",
-	"version": "0.0.2",
+	"version": "0.0.4",
 	"description": "Workers Database Management System for Durable Objects",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
@@ -52,9 +52,9 @@
 		"wrangler": "^3.78.0"
 	},
 	"dependencies": {
-		"nunjucks": "^3.2.4",
 		"chanfana": "^2.0.4",
 		"hono": "^4.6.1",
+		"nunjucks": "^3.2.4",
 		"workers-qb": "^1.6.2",
 		"zod": "^3.23.8"
 	}

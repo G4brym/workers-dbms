@@ -3,7 +3,8 @@ name = "workers-dbms"
 main = "src/index.ts"
 compatibility_date = "2024-09-09"
 compatibility_flags = ["experimental"]
-#workers_dev = false
+workers_dev = true
+account_id = "0d37909e38d3e99c29fa2cd343ac421a"
 
 [[durable_objects.bindings]]
 name = "DBSM_DO"
@@ -17,3 +18,7 @@ class_name = "DBMSDO"
 command = "node src/forms/templates/precompile.mjs templates src/forms/precompiled.mjs"
 cwd = "."
 watch_dir = "templates"
+
+
+[observability]
+enabled = true

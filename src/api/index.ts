@@ -4,6 +4,7 @@ import { DeleteDatabase } from "./endpoints/deleteDatabase";
 import { QueryDatabase } from "./endpoints/queryDatabase";
 import { ListDatabases } from "./endpoints/listDatabases";
 import { StatsDatabase } from "./endpoints/statsDatabase";
+import {WebsocketDatabase} from "./endpoints/websocketDatabase";
 
 export function buildOpenAPI(app) {
 	const openapi = fromHono(app, {
@@ -19,6 +20,7 @@ export function buildOpenAPI(app) {
 	openapi.get("/api/v1/databases", ListDatabases);
 	openapi.post("/api/v1/databases", CreateDatabase);
 	openapi.post("/api/v1/databases/:database_id/query", QueryDatabase);
+	openapi.get("/api/v1/databases/:database_id/websocket", WebsocketDatabase);
 	openapi.post("/api/v1/databases/:database_id/stats", StatsDatabase);
 	openapi.delete("/api/v1/databases/:database_id", DeleteDatabase);
 

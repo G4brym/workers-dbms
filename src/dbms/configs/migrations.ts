@@ -7,11 +7,12 @@ export const migrations: Migration[] = [
 	{
 		name: "100000000000000_add_databases_table.ts",
 		sql: `
-      create table if not exists databases
+      create table if not exists messages
       (
-        id                    TEXT                                not null
+        id                    integer                                not null
           primary key
-          unique,
+          autoincrement,
+        message                    TEXT                                not null,
         created_at            TIMESTAMP default CURRENT_TIMESTAMP not null,
         updated_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP not null
       );

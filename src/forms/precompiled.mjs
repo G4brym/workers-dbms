@@ -270,7 +270,9 @@ output += "\n<div style=\"display: flex; flex-direction: column;\">\n\t<h3>";
 output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "object")),"id"), env.opts.autoescape);
 output += "</h3>\n\n\t<div style=\"display: flex; flex-direction: column\">\n\t\t<article>\n\t\t\tHTTPS Endpoint: <b>";
 output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "endpoints")),"https"), env.opts.autoescape);
-output += "</b>\n\t\t</article>\n\t\t<article>\n\t\t\tWebsocket Endpoint: <b>soon</b>\n\t\t</article>\n\t</div>\n\t<div class=\"grid\">\n\t\t<article>\n\t\t\tDatabase Size: ";
+output += "</b>\n\t\t</article>\n\t\t<article>\n\t\t\tWebsocket Endpoint: <b>";
+output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "endpoints")),"wss"), env.opts.autoescape);
+output += "</b>\n\t\t</article>\n\t</div>\n\t<div class=\"grid\">\n\t\t<article>\n\t\t\tDatabase Size: ";
 output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "stats")),"databaseSize"), env.opts.autoescape);
 output += "<small>MB</small>\n\t\t</article>\n\t\t<article>\n\t\t\tTables: ";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "stats")),"tables")),"length"), env.opts.autoescape);
@@ -318,7 +320,7 @@ try {
 var frame = frame.push(true);
 output += "\n<script src=\"\nhttps://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js\n\"></script>\n<script>\n\tvar queryTextbox = $(\"#query\");\n\tvar queryResult = $(\"#result\");\n\tvar buttonQueryLoading = $(\"#query-loading\");\n\tvar buttonQueryRun = $(\"#query-run\");\n\tbuttonQueryRun.on(\"click\", function (event) {\n\t\tbuttonQueryLoading.show();\n\t\tbuttonQueryRun.hide();\n\t\tconsole.log(queryTextbox.val())\n\n\t\t$.ajax({\n\t\t\turl: \"";
 output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "endpoints")),"https"), env.opts.autoescape);
-output += "\",\n\t\t\tmethod: 'post',\n\t\t\tdata: JSON.stringify({\n\t\t\t\tquery: queryTextbox.val()\n\t\t\t}),\n\t\t\tcontentType: \"application/json; charset=utf-8\",\n\t\t\ttraditional: true,\n\t\t\tsuccess: function (result) {\n\t\t\t\tif (result.length > 0) {\n\t\t\t\t\tvar table = `\n<table><thead><tr>\n${Object.keys(result[0]).map((obj) => '<th scope=\"col\">' + obj + '</th>').join('')}\n</tr></thead><tbody>\n${result.map((obj) => '<tr>' + Object.values(obj).map((inner) => '<th scope=\"row\">' + inner + '</th>').join('') + '</tr>').join('')}\n</tbody></table>`\n\n\t\t\t\t\tqueryResult.html(table)\n\t\t\t\t} else {\n\t\t\t\t\tqueryResult.html('No rows returned')\n\t\t\t\t}\n\n\t\t\t\tbuttonQueryLoading.hide();\n\t\t\t\tbuttonQueryRun.show();\n\t\t\t}\n\t\t});\n\t});\n</script>\n";
+output += "\",\n\t\t\tmethod: 'post',\n\t\t\tdata: JSON.stringify({\n\t\t\t\tquery: queryTextbox.val()\n\t\t\t}),\n\t\t\tcontentType: \"application/json; charset=utf-8\",\n\t\t\ttraditional: true,\n\t\t\tsuccess: function (result) {\n\t\t\t\tif (result.results.length > 0) {\n\t\t\t\t\tvar table = `\n<table><thead><tr>\n${Object.keys(result.results[0]).map((obj) => '<th scope=\"col\">' + obj + '</th>').join('')}\n</tr></thead><tbody>\n${result.results.map((obj) => '<tr>' + Object.values(obj).map((inner) => '<th scope=\"row\">' + inner + '</th>').join('') + '</tr>').join('')}\n</tbody></table>`\n\n\t\t\t\t\tqueryResult.html(table)\n\t\t\t\t} else {\n\t\t\t\t\tqueryResult.html('No rows returned')\n\t\t\t\t}\n\n\t\t\t\tbuttonQueryLoading.hide();\n\t\t\t\tbuttonQueryRun.show();\n\t\t\t}\n\t\t});\n\t});\n</script>\n";
 cb(null, output);
 ;
 } catch (e) {

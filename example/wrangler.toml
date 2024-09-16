@@ -1,8 +1,7 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "workers-dbms"
 main = "index.ts"
-compatibility_date = "2024-09-09"
-compatibility_flags = ["experimental"]
+compatibility_date = "2024-09-26"
 
 [[durable_objects.bindings]]
 name = "DBSM_DO"

@@ -59,9 +59,9 @@ export class DBMSQB extends QueryBuilder<{}> {
 					// meta: resp.meta,
 					// success: resp.success,
 					results:
-						query.fetchType === FetchTypes.ONE && result.length > 0
-							? result[0]
-							: result,
+						query.fetchType === FetchTypes.ONE && result.results.length > 0
+							? result.results[0]
+							: result.results,
 				};
 			}
 

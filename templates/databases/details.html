@@ -8,7 +8,7 @@
 			HTTPS Endpoint: <b>{{endpoints.https}}</b>
 		</article>
 		<article>
-			Websocket Endpoint: <b>soon</b>
+			Websocket Endpoint: <b>{{endpoints.wss}}</b>
 		</article>
 	</div>
 	<div class="grid">
@@ -80,12 +80,12 @@ https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js
 			contentType: "application/json; charset=utf-8",
 			traditional: true,
 			success: function (result) {
-				if (result.length > 0) {
+				if (result.results.length > 0) {
 					var table = `
 <table><thead><tr>
-${Object.keys(result[0]).map((obj) => '<th scope="col">' + obj + '</th>').join('')}
+${Object.keys(result.results[0]).map((obj) => '<th scope="col">' + obj + '</th>').join('')}
 </tr></thead><tbody>
-${result.map((obj) => '<tr>' + Object.values(obj).map((inner) => '<th scope="row">' + inner + '</th>').join('') + '</tr>').join('')}
+${result.results.map((obj) => '<tr>' + Object.values(obj).map((inner) => '<th scope="row">' + inner + '</th>').join('') + '</tr>').join('')}
 </tbody></table>`
 
 					queryResult.html(table)
