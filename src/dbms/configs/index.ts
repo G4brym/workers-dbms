@@ -25,7 +25,7 @@ async function applyConfigMigrations(stub: DurableObjectStub<DBMSDO>) {
 	const lastRunMigrationIndex =
 		(await stub.getKV(LAST_RUN_MIGRATION_INDEX)) ?? 0;
 	for (const migration of migrations.slice(lastRunMigrationIndex)) {
-		stub.sql({
+		await stub.sql({
 			query: migration.sql,
 		});
 	}

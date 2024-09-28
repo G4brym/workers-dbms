@@ -1,7 +1,7 @@
 import { OpenAPIRoute } from "chanfana";
 import { z } from "zod";
 import { databaseIdField } from "../../types";
-import {getConfigDatabase} from "../../dbms/configs";
+import { getConfigDatabase } from "../../dbms/configs";
 
 export class QueryDatabase extends OpenAPIRoute {
 	schema = {
@@ -18,7 +18,9 @@ export class QueryDatabase extends OpenAPIRoute {
 							query: z.string(),
 							arguments: z
 								.array(z.string().or(z.number()).or(z.boolean()).nullable())
-								.optional().nullable(),
+								.optional()
+								.nullable(),
+							arrayMode: z.boolean().default(false).optional(),
 						}),
 					},
 				},
@@ -46,6 +48,7 @@ export class QueryDatabase extends OpenAPIRoute {
 			result = await stub.sql({
 				query: data.body.query,
 				arguments: data.body.arguments,
+				arrayMode: data.body.arrayMode,
 			});
 		} catch (e) {
 			return c.json(

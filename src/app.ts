@@ -1,6 +1,6 @@
-import {Hono} from "hono";
-import {buildOpenAPI} from "./api";
-import {buildViews} from "./forms";
+import { Hono } from "hono";
+import { buildOpenAPI } from "./api";
+import { buildViews } from "./forms";
 
 export function generateApp() {
 	const app = new Hono();
@@ -8,5 +8,5 @@ export function generateApp() {
 	buildOpenAPI(app);
 	buildViews(app);
 
-	return app
+	return app;
 }

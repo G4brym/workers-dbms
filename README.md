@@ -43,8 +43,7 @@ Create a `wrangler.toml` file with this:
 #:schema node_modules/wrangler/config-schema.json
 name = "workers-dbms"
 main = "index.ts"
-compatibility_date = "2024-09-09"
-compatibility_flags = ["experimental"]
+compatibility_date = "2024-09-28"
 
 [[durable_objects.bindings]]
 name = "DBSM_DO"
@@ -60,10 +59,17 @@ Deploy your dbms with wrangler:
 wrangler deploy
 ```
 
+You can now access your dbms on the worker deployed url
+
+There is also a swagger interface with all the endpoints documented at `/api` path.
+
 ## Images
 
 Home page
-![homepage](https://github.com/G4brym/workers-dbms/raw/main/home-page.png)
+![homepage](https://github.com/G4brym/workers-dbms/raw/main/docs/home-page.png)
 
 Database details
-![homepage](https://github.com/G4brym/workers-dbms/raw/main/database-details.png)
+![homepage](https://github.com/G4brym/workers-dbms/raw/main/docs/database-details.png)
+
+API Documentation with swagger
+![homepage](https://github.com/G4brym/workers-dbms/raw/main/docs/swagger.png)

@@ -10,6 +10,6 @@ export type Primitive = string | number | boolean | null | bigint;
 export type DOSqlQuery = {
 	query: string;
 	arguments?: Array<Primitive>;
-	arrayMode?: boolean  // default off TODO
+	arrayMode?: boolean; // default off TODO
 	// fullResults?: boolean  // TODO
 };

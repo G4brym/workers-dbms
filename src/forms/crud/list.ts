@@ -46,7 +46,7 @@ export class DatabasesDetails extends DetailsView {
 			stats,
 			endpoints: {
 				https: `${url.origin}/api/v1/databases/${result.object.id}/query`,
-				wss: `${url.protocol.startsWith('https') ? 'wss' : 'ws'}://${url.host}/api/v1/databases/${result.object.id}/websocket`,
+				wss: `${url.protocol.startsWith("https") ? "wss" : "ws"}://${url.host}/api/v1/databases/${result.object.id}/websocket`,
 			},
 		};
 	}

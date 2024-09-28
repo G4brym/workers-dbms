@@ -4,7 +4,7 @@ import { DeleteDatabase } from "./endpoints/deleteDatabase";
 import { QueryDatabase } from "./endpoints/queryDatabase";
 import { ListDatabases } from "./endpoints/listDatabases";
 import { StatsDatabase } from "./endpoints/statsDatabase";
-import {WebsocketDatabase} from "./endpoints/websocketDatabase";
+import { WebsocketDatabase } from "./endpoints/websocketDatabase";
 
 export function buildOpenAPI(app) {
 	const openapi = fromHono(app, {

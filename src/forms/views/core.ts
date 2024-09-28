@@ -4,8 +4,6 @@ import { getConfigDatabase } from "../../dbms/configs";
 
 export function fwrapper(view) {
 	return async (c) => {
-		// console.log(c)
-
 		return new view({
 			request: c.req,
 			env: c.env,

@@ -1,13 +1,8 @@
 {
   "name": "workers-dbms-example",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
+  "main": "index.ts",
   "license": "MIT",
-  "description": "",
   "dependencies": {
     "workers-dbms": "^0.0.4",
     "wrangler": "^3.78.10"

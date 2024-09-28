@@ -1,7 +1,7 @@
-import {DurableObject} from "cloudflare:workers";
-import type {Env} from "../bindings";
-import type {SqlStorage} from "@cloudflare/workers-types/experimental/index";
-import type {DOSqlQuery, Primitive} from "../types";
+import { DurableObject } from "cloudflare:workers";
+import type { Env } from "../bindings";
+import type { SqlStorage } from "@cloudflare/workers-types/experimental/index";
+import type { DOSqlQuery, Primitive } from "../types";
 
 const SETTING_ENABLED = "SETTING_ENABLED";
 const SETTING_LOCKED = "SETTING_LOCKED";
@@ -22,7 +22,7 @@ export class DBMSDO extends DurableObject<Env> {
 	}
 
 	async isEnabled(): Promise<number> {
-		return this.enabled
+		return this.enabled;
 	}
 
 	async setEnabled(state: number): Promise<void> {
@@ -33,7 +33,7 @@ export class DBMSDO extends DurableObject<Env> {
 	}
 
 	async isLocked(): Promise<number> {
-		return this.locked
+		return this.locked;
 	}
 
 	async setLocked(state: number): Promise<void> {
@@ -47,11 +47,11 @@ export class DBMSDO extends DurableObject<Env> {
 		await this.ctx.storage.put(`USER-${key}`, value);
 	}
 
-	async getKV(key: string): Promise<Primitive | void> {
+	async getKV(key: string): Promise<Primitive | undefined> {
 		await this.ctx.storage.get<Primitive>(`USER-${key}`);
 	}
 
-	async sql(params: DOSqlQuery): Promise<object> {
+	async sql(params: DOSqlQuery): Promise<any> {
 		if (this.enabled === 0) {
 			throw new Error(`This database doesn't exist`);
 		}
@@ -65,22 +65,22 @@ export class DBMSDO extends DurableObject<Env> {
 			cursor = this.db.exec(params.query);
 		}
 
-		let result = Array.from(cursor)
+		let result = Array.from(cursor);
 
 		if (params.arrayMode === true) {
-			result = result.map((obj) => Object.values(obj))
+			result = result.map((obj) => Object.values(obj as object));
 		}
 
 		return {
 			results: result,
 			meta: {
-				"rows_read": cursor.rowsRead,
-				"rows_written": cursor.rowsWritten,
-				"row_count": cursor.rowcount,
-				"last_row_id": cursor.lastrowid,
-				...cursor
-			}
-		}
+				rows_read: cursor.rowsRead,
+				rows_written: cursor.rowsWritten,
+				//row_count: cursor.rowcount,
+				//last_row_id: cursor.lastrowid,
+				...cursor,
+			},
+		};
 	}
 
 	async stats(): Promise<object> {
@@ -120,7 +120,6 @@ export class DBMSDO extends DurableObject<Env> {
 
 	declare __DURABLE_OBJECT_BRAND: never;
 
-
 	async fetch(request) {
 		const webSocketPair = new WebSocketPair();
 		const [client, server] = Object.values(webSocketPair);
@@ -144,7 +143,7 @@ export class DBMSDO extends DurableObject<Env> {
 
 	async webSocketMessage(ws, message) {
 		// console.log(message)
-		const resp = await this.processWSMessage(JSON.parse(message.toString()))
+		const resp = await this.processWSMessage(JSON.parse(message.toString()));
 
 		// console.log(resp)
 		ws.send(JSON.stringify(resp));
@@ -152,33 +151,34 @@ export class DBMSDO extends DurableObject<Env> {
 
 	async processWSMessage(message: object) {
 		switch (message.type) {
-			case 'request':
+			case "request":
 				switch (message.request.type) {
-					case 'execute':
+					case "execute":
 						try {
 							return {
-								"type": "execute",
-								"result": await this.sql({
+								type: "execute",
+								result: await this.sql({
 									query: message.request.stmt.query,
 									arguments: message.request.stmt.arguments,
-									arrayMode: true
+									arrayMode: true,
 								}),
-							}
+							};
 						} catch (e) {
 							return {
-								"type": "response_error",
-								"error": e.toString()
-							}
+								type: "response_error",
+								error: e.toString(),
+							};
 						}
 
 					default:
-						throw new Error(`Unknown message.request.type: ${message.request.type}`)
+						throw new Error(
+							`Unknown message.request.type: ${message.request.type}`,
+						);
 				}
 
 			default:
-			throw new Error(`Unknown message.type: ${message.type}`)
+				throw new Error(`Unknown message.type: ${message.type}`);
 		}
-
 	}
 
 	async webSocketClose(ws, code, reason, wasClean) {

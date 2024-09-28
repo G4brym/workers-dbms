@@ -1,7 +1,7 @@
 import { OpenAPIRoute } from "chanfana";
 import { z } from "zod";
 import { databaseIdField } from "../../types";
-import {getConfigDatabase} from "../../dbms/configs";
+import { getConfigDatabase } from "../../dbms/configs";
 
 export class WebsocketDatabase extends OpenAPIRoute {
 	schema = {
@@ -29,13 +29,15 @@ export class WebsocketDatabase extends OpenAPIRoute {
 			});
 		}
 
-      // Expect to receive a WebSocket Upgrade request.
-      // If there is one, accept the request and return a WebSocket Response.
-      const upgradeHeader = c.req.raw.headers.get('Upgrade');
-      if (!upgradeHeader || upgradeHeader !== 'websocket') {
-        return new Response('Durable Object expected Upgrade: websocket', { status: 426 });
-      }
+		// Expect to receive a WebSocket Upgrade request.
+		// If there is one, accept the request and return a WebSocket Response.
+		const upgradeHeader = c.req.raw.headers.get("Upgrade");
+		if (!upgradeHeader || upgradeHeader !== "websocket") {
+			return new Response("Durable Object expected Upgrade: websocket", {
+				status: 426,
+			});
+		}
 
-      return stub.fetch(c.req.raw);
+		return stub.fetch(c.req.raw);
 	}
 }

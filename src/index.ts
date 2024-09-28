@@ -1,7 +1,7 @@
-import {generateApp} from "./app";
-export {DBMSDO} from "./dbms";
+export { generateApp } from "./app";
+export { DBMSDO } from "./dbms";
 
-export default generateApp()
+//export default generateApp();
 // export default {
 //   async fetch(request, env, ctx) {
 //     if (request.url.endsWith("/websocket")) {

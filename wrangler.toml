@@ -1,24 +1,23 @@
 #:schema node_modules/wrangler/config-schema.json
+# This is a development only wrangler.toml, for production use the one in example/wrangler.toml
+
 name = "workers-dbms"
-main = "src/index.ts"
-compatibility_date = "2024-09-09"
-compatibility_flags = ["experimental"]
-workers_dev = true
-account_id = "0d37909e38d3e99c29fa2cd343ac421a"
+main = "src/development.ts"
+compatibility_date = "2024-09-28"
+workers_dev = false
 
 [[durable_objects.bindings]]
 name = "DBSM_DO"
 class_name = "DBMSDO"
 
-#[[migrations]]
-#tag = "v1"
-#new_sqlite_classes = ["DBMSDO"]
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DBMSDO"]
 
 [build]
-command = "node src/forms/templates/precompile.mjs templates src/forms/precompiled.mjs"
+command = "npm run build-templates"
 cwd = "."
 watch_dir = "templates"
-
 
 [observability]
 enabled = true

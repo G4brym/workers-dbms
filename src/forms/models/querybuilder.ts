@@ -1,35 +1,10 @@
 import {
+	asyncLoggerWrapper,
 	FetchTypes,
 	type Query,
 	QueryBuilder,
 	type QueryBuilderOptions,
 } from "workers-qb";
-
-// TODO: import this from lib
-export async function asyncLoggerWrapper<Async extends boolean = true>(
-	query: Query<any, Async> | Query<any, Async>[],
-	loggerFunction: CallableFunction | undefined,
-	innerFunction: () => any,
-) {
-	const start = Date.now();
-	try {
-		return await innerFunction();
-	} catch (e) {
-		throw e;
-	} finally {
-		if (loggerFunction) {
-			if (Array.isArray(query)) {
-				for (const q of query) {
-					await loggerFunction(q.toObject(), { duration: Date.now() - start });
-				}
-			} else {
-				await loggerFunction(query.toObject(), {
-					duration: Date.now() - start,
-				});
-			}
-		}
-	}
-}
 
 export class DBMSQB extends QueryBuilder<{}> {
 	public db: any;
