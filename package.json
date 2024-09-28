@@ -1,17 +1,16 @@
 {
 	"name": "workers-dbms",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "Workers Database Management System for Durable Objects",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
-	"types": "./dist/index.d.ts",
 	"files": [
 		"dist",
 		"LICENSE",
 		"README.md"
 	],
 	"scripts": {
-		"build": "npm run build-templates && tsup src/index.ts --format cjs,esm --dts --external cloudflare:workers",
+		"build": "npm run build-templates && tsup src/index.ts --format cjs,esm --external cloudflare:workers",
 		"build-templates": "node src/forms/templates/precompile.mjs templates src/forms/precompiled.mjs",
 		"format": "npx @biomejs/biome format --write",
 		"lint-biome": "npx @biomejs/biome lint --write"
