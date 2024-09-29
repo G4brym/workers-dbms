@@ -1,12 +1,23 @@
 # workers-dbms
 Workers Database Management System for Durable Objects
 
+This project aims to provide a standard interface for "traditional" frameworks that are currently not supported by
+cloudflare workers to be able to use Durable Objects with SQLite as the backend database!
+
+The main differences from Cloudflare D1 are:
+- Websocket support (this really makes a difference when executing dozens of queries sequentially)
+- Experimental transactions support
+
 
 ## Features
 - On demand SQLite databases (like neon.tech)
 - https endpoints to manage and query databases
 - Websocket endpoint to query databases
 - **Transactions support** in websocket mode!
+
+
+## Supported frameworks
+- Django using [django-cf](https://github.com/G4brym/django-cf)
 
 
 ## Get started
@@ -49,24 +60,6 @@ wrangler deploy
 You can now access your dbms on the worker deployed url
 
 There is also a swagger interface with all the endpoints documented at `/api` path.
-
-
-## Supported frameworks
-#### Django
-The package [django-d1](https://github.com/G4brym/django-d1) has an experimental backend to use the websocket
-endpoint to run django migrations and queries
-
-Example usage in django:
-```
-DATABASES = {
-    'default': {
-        'ENGINE': 'django_dbms',
-        'WORKERS_DBMS_ENDPOINT': 'wss://your-endpoint.dev/api/v1/databases/django/websocket',
-        'WORKERS_DBMS_ACCESS_ID': 'abc.access',
-        'WORKERS_DBMS_ACCESS_SECRET': 'abcabc',
-    }
-}
-```
 
 
 ## Images
