@@ -11,18 +11,24 @@ export class DBMSDO extends DurableObject<Env> {
 	private locked = 0; // this is number, because in the future there might be more than 2 states
 	private db: SqlStorage;
 
+	// This holds the session id for the websocket that has an active transaction
+	// This variable is not sync into kv, because if the durable object resets, the transaction should reset as well
+	private sessionIdInPower = null
+	private rollbackPIRT = null
+
 	constructor(state: DurableObjectState, env: Env) {
 		super(state, env);
 
 		this.db = this.ctx.storage.sql;
 		void this.ctx.blockConcurrencyWhile(async () => {
 			this.enabled = (await this.ctx.storage.get<number>(SETTING_ENABLED)) ?? 0;
-			this.locked = (await this.ctx.storage.get<number>(SETTING_LOCKED)) ?? 0;
+			this.locked = 0;
+			//this.locked = (await this.ctx.storage.get<number>(SETTING_LOCKED)) ?? 0;
 		});
 	}
 
-	async isEnabled(): Promise<number> {
-		return this.enabled;
+	isEnabled(): boolean {
+		return this.enabled === 1;
 	}
 
 	async setEnabled(state: number): Promise<void> {
@@ -32,16 +38,48 @@ export class DBMSDO extends DurableObject<Env> {
 		}
 	}
 
-	async isLocked(): Promise<number> {
-		return this.locked;
+	isLocked(): boolean {
+		return this.locked === 1;
 	}
 
 	async setLocked(state: number): Promise<void> {
 		if (state !== this.locked) {
-			await this.ctx.storage.put<number>(SETTING_LOCKED, state);
+//			await this.ctx.storage.put<number>(SETTING_LOCKED, state);
 			this.locked = state;
 		}
 	}
+
+	async beginTransaction(sessionId: string) {
+		console.log(`running begin for ${sessionId}`)
+		await this.setLocked(1)
+		this.sessionIdInPower = sessionId
+		this.rollbackPIRT = await this.ctx.storage.getCurrentBookmark()
+	}
+
+	async commitTransaction() {
+		console.log(`running commit`)
+		await this.setLocked(0)
+		this.sessionIdInPower = null
+		this.rollbackPIRT = null
+	}
+
+	async rollbackTransaction() {
+		if (this.isLocked() && this.rollbackPIRT) {
+			console.log(`running rollback`)
+			await this.ctx.storage.onNextSessionRestoreBookmark(this.rollbackPIRT);
+			await this.ctx.abort();
+		}
+	}
+
+	async awaitUntil(conditionFunction) {
+	  const poll = resolve => {
+		if(conditionFunction()) resolve();
+		else setTimeout(_ => poll(resolve), 50);  // TODO: check if this can go down further
+	  }
+
+	  return new Promise(poll);
+	}
+
 
 	async putKV(key: string, value: Primitive): Promise<void> {
 		await this.ctx.storage.put(`USER-${key}`, value);
@@ -133,7 +171,7 @@ export class DBMSDO extends DurableObject<Env> {
 		// from memory, but the WebSocket connection will remain open. If at some later point the
 		// WebSocket receives a message, the runtime will recreate the Durable Object
 		// (run the `constructor`) and deliver the message to the appropriate handler.
-		this.ctx.acceptWebSocket(server);
+		this.ctx.acceptWebSocket(server, [crypto.randomUUID()]);
 
 		return new Response(null, {
 			status: 101,
@@ -142,19 +180,99 @@ export class DBMSDO extends DurableObject<Env> {
 	}
 
 	async webSocketMessage(ws, message) {
+		const tags = this.ctx.getTags(ws)
+
 		// console.log(message)
-		const resp = await this.processWSMessage(JSON.parse(message.toString()));
+		const resp = await this.processWSMessage(JSON.parse(message.toString()), tags[0]);
 
 		// console.log(resp)
 		ws.send(JSON.stringify(resp));
 	}
 
-	async processWSMessage(message: object) {
+	async processWSMessage(message: object, wsSessionId) {
 		switch (message.type) {
 			case "request":
 				switch (message.request.type) {
 					case "execute":
+						console.log(`ws execute ${wsSessionId}`)
 						try {
+							if (this.isLocked() && wsSessionId !== this.sessionIdInPower) {
+
+								console.log('db locked: waiting')
+								await this.awaitUntil(_ => this.isLocked() === 1)
+							}
+
+							const queries = message.request.stmt.query.split(';').map((q) => q.trim().toLowerCase())
+							for (const q of queries) {
+								if (q === 'begin') {
+									if (this.isLocked()) {
+										return {
+											type: "response_error",
+											error: "database already locked to a different transaction",
+										}
+									}
+
+									await this.beginTransaction(wsSessionId)
+									return {
+										type: "execute",
+										result: {
+											results: [],
+											meta: {}
+										},
+									}
+								}
+
+								if (q === 'commit') {
+									if (!this.isLocked()) {
+										return {
+											type: "response_error",
+											error: "no transaction is progress to commit",
+										}
+									}
+
+									if (wsSessionId !== this.sessionIdInPower) {
+										return {
+											type: "response_error",
+											error: "your session cannot commit another one transaction",
+										}
+									}
+
+									await this.commitTransaction()
+									return {
+										type: "execute",
+										result: {
+											results: [],
+											meta: {}
+										},
+									}
+								}
+
+								if (q === 'rollback') {
+									if (!this.isLocked()) {
+										return {
+											type: "response_error",
+											error: "no transaction is progress to rollback",
+										}
+									}
+
+									if (wsSessionId !== this.sessionIdInPower) {
+										return {
+											type: "response_error",
+											error: "your session cannot rollback another one transaction",
+										}
+									}
+
+									this.ctx.waitUntil(this.rollbackTransaction())
+									return {
+										type: "execute",
+										result: {
+											results: [],
+											meta: {}
+										},
+									}
+								}
+							}
+
 							return {
 								type: "execute",
 								result: await this.sql({
@@ -183,5 +301,11 @@ export class DBMSDO extends DurableObject<Env> {
 
 	async webSocketClose(ws, code, reason, wasClean) {
 		ws.close(code, "Durable Object is closing WebSocket");
+
+		// If the socket disconnecting is the one in power, rollback!
+		const tags = this.ctx.getTags(ws)
+		if (tags[0] === this.sessionIdInPower) {
+			await this.rollbackTransaction()
+		}
 	}
 }

@@ -6,21 +6,7 @@ Workers Database Management System for Durable Objects
 - On demand SQLite databases (like neon.tech)
 - https endpoints to manage and query databases
 - Websocket endpoint to query databases
-
-
-## Connect apps outside Cloudflare to your database
-The package [django-d1](https://github.com/G4brym/django-d1) has an experimental backend to use the websocket
-endpoint to run django migrations and queries
-
-Example usage in django:
-```
-DATABASES = {
-    'default': {
-        'ENGINE': 'django_dbms',
-        'WORKERS_DBMS_ENDPOINT': 'wss://workers-dbms.workers.dev/api/v1/databases/django/websocket',
-    }
-}
-```
+- **Transactions support** in websocket mode!
 
 
 ## Get started
@@ -65,6 +51,36 @@ You can now access your dbms on the worker deployed url
 There is also a swagger interface with all the endpoints documented at `/api` path.
 
 
+## Supported frameworks
+#### Django
+The package [django-d1](https://github.com/G4brym/django-d1) has an experimental backend to use the websocket
+endpoint to run django migrations and queries
+
+Example usage in django:
+```
+DATABASES = {
+    'default': {
+        'ENGINE': 'django_dbms',
+        'WORKERS_DBMS_ENDPOINT': 'wss://your-endpoint.dev/api/v1/databases/django/websocket',
+        'WORKERS_DBMS_ACCESS_ID': 'abc.access',
+        'WORKERS_DBMS_ACCESS_SECRET': 'abcabc',
+    }
+}
+```
+
+
+## Images
+
+Home page
+![homepage](https://github.com/G4brym/workers-dbms/raw/main/docs/home-page.png)
+
+Database details
+![homepage](https://github.com/G4brym/workers-dbms/raw/main/docs/database-details.png)
+
+API Documentation with swagger
+![homepage](https://github.com/G4brym/workers-dbms/raw/main/docs/swagger.png)
+
+
 ## FAQ
 
 ### Handshake status 426 Upgrade Required
@@ -80,15 +96,3 @@ otherwise you will not be able to use the websocket endpoint!
 1. For secure databases, you should uncomment the `workers_dev = false` line in your `wrangler.toml`
 2. Create a custom domain for your worker [docs here](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/#add-a-custom-domain)
 3. Setup zero trust for this worker [docs here](https://developers.cloudflare.com/cloudflare-one/applications/configure-apps/self-hosted-apps/)
-
-
-## Images
-
-Home page
-![homepage](https://github.com/G4brym/workers-dbms/raw/main/docs/home-page.png)
-
-Database details
-![homepage](https://github.com/G4brym/workers-dbms/raw/main/docs/database-details.png)
-
-API Documentation with swagger
-![homepage](https://github.com/G4brym/workers-dbms/raw/main/docs/swagger.png)
