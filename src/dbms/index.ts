@@ -42,7 +42,7 @@ export class DBMSDO extends DurableObject<Env> {
 		return this.locked === 1;
 	}
 
-	async setLocked(state: number): Promise<void> {
+	setLocked(state: number): void {
 		if (state !== this.locked) {
 //			await this.ctx.storage.put<number>(SETTING_LOCKED, state);
 			this.locked = state;
@@ -51,14 +51,14 @@ export class DBMSDO extends DurableObject<Env> {
 
 	async beginTransaction(sessionId: string) {
 		console.log(`running begin for ${sessionId}`)
-		await this.setLocked(1)
+		this.setLocked(1)
 		this.sessionIdInPower = sessionId
 		this.rollbackPIRT = await this.ctx.storage.getCurrentBookmark()
 	}
 
 	async commitTransaction() {
 		console.log(`running commit`)
-		await this.setLocked(0)
+		this.setLocked(0)
 		this.sessionIdInPower = null
 		this.rollbackPIRT = null
 	}
@@ -103,10 +103,11 @@ export class DBMSDO extends DurableObject<Env> {
 			cursor = this.db.exec(params.query);
 		}
 
-		let result = Array.from(cursor);
-
+		let result
 		if (params.arrayMode === true) {
-			result = result.map((obj) => Object.values(obj as object));
+			result = cursor.raw().toArray()
+		} else {
+			result = cursor.toArray()
 		}
 
 		return {
@@ -185,7 +186,7 @@ export class DBMSDO extends DurableObject<Env> {
 		// console.log(message)
 		const resp = await this.processWSMessage(JSON.parse(message.toString()), tags[0]);
 
-		// console.log(resp)
+		// console.log(JSON.stringify(resp))
 		ws.send(JSON.stringify(resp));
 	}
 
@@ -282,6 +283,7 @@ export class DBMSDO extends DurableObject<Env> {
 								}),
 							};
 						} catch (e) {
+							console.error(e)
 							return {
 								type: "response_error",
 								error: e.toString(),
@@ -303,9 +305,11 @@ export class DBMSDO extends DurableObject<Env> {
 		ws.close(code, "Durable Object is closing WebSocket");
 
 		// If the socket disconnecting is the one in power, rollback!
-		const tags = this.ctx.getTags(ws)
-		if (tags[0] === this.sessionIdInPower) {
-			await this.rollbackTransaction()
+		if (this.isLocked()) {
+			const tags = this.ctx.getTags(ws)
+			if (tags[0] === this.sessionIdInPower) {
+				await this.rollbackTransaction()
+			}
 		}
 	}
 }
