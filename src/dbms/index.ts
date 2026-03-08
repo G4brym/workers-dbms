@@ -200,7 +200,7 @@ export class DBMSDO extends DurableObject<Env> {
 							if (this.isLocked() && wsSessionId !== this.sessionIdInPower) {
 
 								console.log('db locked: waiting')
-								await this.awaitUntil(_ => this.isLocked() === 1)
+								await this.awaitUntil(_ => !this.isLocked())
 							}
 
 							const queries = message.request.stmt.query.split(';').map((q) => q.trim().toLowerCase())
