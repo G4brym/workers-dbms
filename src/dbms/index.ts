@@ -135,11 +135,10 @@ export class DBMSDO extends DurableObject<Env> {
 						  and tbl_name not like '_cf%';`,
 			})
 		).results.map((obj) => {
-			const columns = obj.sql
-				.split("(")[1]
-				.split(")")[0]
-				.split(",")
-				.map((col: string) => col.trim().replaceAll('"', "").split(" ")[0]);
+			const sqlBody = obj.sql?.split("(")?.[1]?.split(")")?.[0];
+			const columns = sqlBody
+				? sqlBody.split(",").map((col: string) => col.trim().replaceAll('"', "").split(" ")[0])
+				: [];
 
 			return {
 				...obj,
