@@ -227,14 +227,14 @@ export class DBMSDO extends DurableObject<Env> {
 									if (!this.isLocked()) {
 										return {
 											type: "response_error",
-											error: "no transaction is progress to commit",
+											error: "no transaction in progress to commit",
 										}
 									}
 
 									if (wsSessionId !== this.sessionIdInPower) {
 										return {
 											type: "response_error",
-											error: "your session cannot commit another one transaction",
+											error: "your session cannot commit another session's transaction",
 										}
 									}
 
@@ -252,14 +252,14 @@ export class DBMSDO extends DurableObject<Env> {
 									if (!this.isLocked()) {
 										return {
 											type: "response_error",
-											error: "no transaction is progress to rollback",
+											error: "no transaction in progress to rollback",
 										}
 									}
 
 									if (wsSessionId !== this.sessionIdInPower) {
 										return {
 											type: "response_error",
-											error: "your session cannot rollback another one transaction",
+											error: "your session cannot rollback another session's transaction",
 										}
 									}
 
