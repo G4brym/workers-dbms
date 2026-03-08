@@ -24,7 +24,7 @@ export class DeleteDatabase extends OpenAPIRoute {
 
 		await stub.destroy();
 
-		const result = configDatabase.sql({
+		const result = await configDatabase.sql({
 			query: "DELETE FROM databases WHERE id = ? RETURNING *",
 			arguments: [data.params.database_id],
 		});
