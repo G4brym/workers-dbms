@@ -86,7 +86,7 @@ export class DBMSDO extends DurableObject<Env> {
 	}
 
 	async getKV(key: string): Promise<Primitive | undefined> {
-		await this.ctx.storage.get<Primitive>(`USER-${key}`);
+		return await this.ctx.storage.get<Primitive>(`USER-${key}`);
 	}
 
 	async sql(params: DOSqlQuery): Promise<any> {
